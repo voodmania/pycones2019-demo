@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Starlette demo</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Starlette demo</h1>
+
+        <select id="prevision_autocomplete" class="form-control" type="text" placeholder="escribir localidad ..." autocomplete="off"></select>
+
+        <div id="prevision"></div>
+
+        <p>Ultima previsión: {{ ultima_prevision }}</p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@v2.2.2/dist/latest/bootstrap-autocomplete.min.js"></script>
+    <script>
+        $(function(){
+            console.log('autocomplete init');
+            $('#prevision_autocomplete').autoComplete({
+                resolver: 'custom',
+                events: {
+                    search: function(query, callback){
+                        $.ajax('autocomplete', {data: {'q': query}}).done(function(res){
+                            callback(res);
+                        });
+                    }
+                }
+            });
+            $('#prevision_autocomplete').on('autocomplete.select', function(event, item){
+                $.ajax('prevision/' + item.value + '/').done(function(res){
+                    $('#prevision').html(JSON.stringify(res));
+                    $('#prevision_autocomplete').val('');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
